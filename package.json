@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@rematch/core": "^2.2.0",
+    "@rematch/loading": "^2.1.2",
+    "@rematch/persist": "^2.1.2",
     "@tailwindcss/postcss": "^4.0.6",
     "@tailwindcss/vite": "^4.0.6",
     "class-variance-authority": "^0.7.1",
@@ -19,6 +23,11 @@
     "postcss": "^8.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
+    "react-router": "^7.1.5",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
+    "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.6",
     "tailwindcss-animate": "^1.0.7"
