@@ -1,6 +1,6 @@
 import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
-import AddEMIButton from '@/components/EMI/AddButton';
+import FormModal from '@/components/EMI/AddButton';
 import EMICard from '@/components/EMI/EMICard';
 import { IRootState } from '@/store/types/store.types';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ const Home = () => {
       <MainContainer>
         <div className='flex flex-row justify-between p-2'>
           <h3 className='text-2xl font-bold'>EMI List</h3>
-          <AddEMIButton />
+          <FormModal />
         </div>
         <div className='grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3'>
           {emiData.length === 0 ? (

@@ -9,7 +9,7 @@ import {
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, IndianRupee, Info, PercentIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import CustomCalendar from '../calender/CustomCalender';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,8 +17,10 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import { calculateEMI } from '@/utils/calculation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch } from '@/store/store';
+import { IEmi } from '@/store/models/emiModel';
+import ToolTipWrapper from '../common/ToolTipWrapper';
 
 const formSchema = z.object({
   itemName: z.string().min(2, {
@@ -27,38 +29,74 @@ const formSchema = z.object({
   principal: z.number().min(1000, {
     message: 'Principal amount must be at least ₹1,000.',
   }),
-  interestRate: z.number().min(1).max(100, {
+  interestRate: z.number().min(0).max(100, {
     message: 'Interest rate must be between 1 and 100.',
   }),
   billDate: z.date({ message: 'Please select a bill date.' }),
   tenure: z.number().min(1).max(360, {
     message: 'Tenure must be between 1 and 360 months.',
   }),
+  interestDiscount: z.number().min(0).max(100, {
+    message: 'Interest discount must be between 0 and 100.',
+  }),
+  interestDiscountType: z.enum(['percent', 'amount']),
 });
 
 export type TFormValues = z.infer<typeof formSchema>;
 
-const AddEMIForm = ({
+const EMIForm = ({
   setIsOpen,
+  data,
 }: {
   setIsOpen: (isOpen: boolean) => void;
+  data?: IEmi;
 }) => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
+
+  const isEdit = !!data;
+
   const form = useForm<TFormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      itemName: data?.itemName || '',
+      principal: data?.principal || undefined,
+      interestRate: data?.interestRate || undefined,
+      billDate: data?.billDate || undefined,
+      tenure: data?.tenure || undefined,
+      interestDiscount: data?.interestDiscount || undefined,
+      interestDiscountType: data?.interestDiscountType || 'percent',
+    },
   });
 
   function onSubmit(values: TFormValues) {
     console.log(values);
-    const newEMI = calculateEMI(values);
+    const calculatedValues = calculateEMI(values, data?.id);
 
-    console.log(newEMI);
-    if (newEMI) {
-      dispatch.emiModel.addEmi(newEMI);
+    console.log(calculatedValues);
+    if (calculatedValues) {
+      if (isEdit) {
+        dispatch.emiModel.updateEmi(calculatedValues);
+      } else {
+        dispatch.emiModel.addEmi(calculatedValues);
+      }
       setIsOpen(false);
     }
   }
+
+  const interestDiscount = form.watch('interestDiscount');
+  const interestDiscountType = form.watch('interestDiscountType');
+
+  const interestDiscountPlaceholder =
+    interestDiscountType === 'amount' ? 'e.g., 1000 (₹)' : 'e.g., 12.5 (%)';
+
+  useEffect(() => {
+    if (interestDiscountType === 'amount') {
+      form.setValue('interestDiscount', interestDiscount);
+    } else {
+      form.setValue('interestDiscount', interestDiscount);
+    }
+  }, [interestDiscountType, interestDiscount, form]);
 
   return (
     <Form {...form}>
@@ -73,7 +111,7 @@ const AddEMIForm = ({
             <FormItem>
               <FormLabel>Item Name</FormLabel>
               <FormControl>
-                <Input placeholder='e.g., Laptop' {...field} />
+                <Input placeholder='e.g., Laptop' {...field} min={0} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,7 +122,12 @@ const AddEMIForm = ({
           name='principal'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Principal Amount (₹)</FormLabel>
+              <div className='flex flex-row gap-2'>
+                <FormLabel>Principal Amount (₹)</FormLabel>
+                <ToolTipWrapper content='Principal amount is the amount of money borrowed from the bank or lender.'>
+                  <Info className='w-4 h-4' />
+                </ToolTipWrapper>
+              </div>
               <FormControl>
                 <Input
                   type='number'
@@ -102,7 +145,12 @@ const AddEMIForm = ({
           name='interestRate'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Interest Rate (%)</FormLabel>
+              <div className='flex flex-row gap-2'>
+                <FormLabel>Interest Rate (%)</FormLabel>
+                <ToolTipWrapper content='If it is No Interest Loan, then use 0 for interest rate and interest discount'>
+                  <Info className='w-4 h-4' />
+                </ToolTipWrapper>
+              </div>
               <FormControl>
                 <Input
                   type='number'
@@ -121,7 +169,12 @@ const AddEMIForm = ({
           name='billDate'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bill Date</FormLabel>
+              <div className='flex flex-row gap-2'>
+                <FormLabel>Bill Date</FormLabel>
+                <ToolTipWrapper content='Use statement date as bill date. So that you can track your EMI date and bill date.'>
+                  <Info className='w-4 h-4' />
+                </ToolTipWrapper>
+              </div>
               <FormControl>
                 <FormControl>
                   <Popover open={open} onOpenChange={setOpen}>
@@ -181,12 +234,59 @@ const AddEMIForm = ({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name='interestDiscount'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Interest Discount (%) / (₹)</FormLabel>
+              <FormControl>
+                <div className='relative'>
+                  <Input
+                    type='number'
+                    placeholder={interestDiscountPlaceholder}
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    className='pr-16'
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name='interestDiscountType'
+                    render={({ field }) => (
+                      <div className='absolute inset-y-0 right-2 flex items-center space-x-2'>
+                        <button
+                          type='button'
+                          onClick={() =>
+                            field.onChange(
+                              field.value === 'percent' ? 'amount' : 'percent'
+                            )
+                          }
+                          className='bg-transparent border-none text-gray-500 hover:bg-transparent hover:text-foreground cursor-pointer'
+                          {...field}
+                        >
+                          {field.value === 'amount' ? (
+                            <IndianRupee className='w-4 h-4' />
+                          ) : (
+                            <PercentIcon className='w-4 h-4' />
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type='submit' className='w-36 col-span-2 ml-auto'>
-          Add EMI
+          {isEdit ? 'Update' : 'Add'}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default AddEMIForm;
+export default EMIForm;

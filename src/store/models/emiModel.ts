@@ -9,6 +9,8 @@ export interface IEmi {
   interestRate: number;
   billDate: Date;
   tenure: number;
+  interestDiscount: number;
+  interestDiscountType: 'percent' | 'amount';
   emi: number;
   totalLoan: number;
   totalPaidEMIs: number;

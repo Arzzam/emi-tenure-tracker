@@ -8,14 +8,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-import AddEMIForm from './AddEMIForm';
+import EMIForm from './EMIForm';
+import { IEmi } from '@/store/models/emiModel';
 
-const AddEMIButton = () => {
+const FormModal = ({ data }: { data?: IEmi }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isEdit = !!data;
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Add EMI</Button>
+        <Button>{isEdit ? 'Edit EMI' : 'Add EMI'}</Button>
       </DialogTrigger>
       <DialogContent onInteractOutside={(ev) => ev.preventDefault()}>
         <DialogHeader>
@@ -24,10 +26,10 @@ const AddEMIButton = () => {
             Enter the details of your new EMI here.
           </DialogDescription>
         </DialogHeader>
-        <AddEMIForm setIsOpen={setIsOpen} />
+        <EMIForm setIsOpen={setIsOpen} data={data} />
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AddEMIButton;
+export default FormModal;

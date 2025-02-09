@@ -1,6 +1,6 @@
 import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { IRootState } from '@/store/types/store.types';
 import { IEmi } from '@/store/models/emiModel';
@@ -15,12 +15,14 @@ import {
 } from '@/components/ui/table';
 import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
 import { useAppDispatch } from '@/store/store';
+import FormModal from '@/components/EMI/AddButton';
 
 const EMIDetails = () => {
   const { id } = useParams();
   const emiData = useSelector((state: IRootState) => state.emiModel);
   const currentData = emiData.find((emi: IEmi) => emi.id === id);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   if (!currentData) {
     return <div>EMI not found</div>;
@@ -61,6 +63,7 @@ const EMIDetails = () => {
 
   const handleDelete = () => {
     dispatch.emiModel.deleteEmi(currentData.id);
+    navigate('/');
   };
 
   return (
@@ -80,6 +83,7 @@ const EMIDetails = () => {
             <Button variant='outline' onClick={handleRecalculate}>
               Recalculate
             </Button>
+            <FormModal data={currentData} />
           </div>
         </div>
         <h3 className='text-lg font-bold mt-2 pl-2'>EMI Details</h3>

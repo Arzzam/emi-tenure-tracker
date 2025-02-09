@@ -1,17 +1,30 @@
-import { TFormValues } from '@/components/EMI/AddEMIForm';
+import { TFormValues } from '@/components/EMI/EMIForm';
 import { IEmi, ScheduleData } from '@/store/models/emiModel';
 import { addMonths, format, isBefore } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 export const calculateEMI = (
-  { principal, interestRate, tenure, billDate, itemName }: TFormValues,
+  {
+    principal,
+    interestRate,
+    tenure,
+    billDate,
+    itemName,
+    interestDiscount,
+    interestDiscountType,
+  }: TFormValues,
   id?: string
 ): IEmi => {
   const P = principal;
   const r = interestRate / 100 / 12;
   const n = tenure;
 
-  const emiValue = (P * r * (1 + r) ** n) / ((1 + r) ** n - 1);
+  let emiValue = 0;
+  if (r === 0) {
+    emiValue = P / n;
+  } else {
+    emiValue = (P * r * (1 + r) ** n) / ((1 + r) ** n - 1);
+  }
 
   const { scheduleData, totalInterest } = calculateAmortizationSchedule({
     principal: P,
@@ -19,6 +32,8 @@ export const calculateEMI = (
     r,
     billDate,
     emiValue,
+    interestDiscount,
+    interestDiscountType,
   });
 
   const { completedMonths, remainingMonths } = calculateRemainingTenure(
@@ -41,6 +56,8 @@ export const calculateEMI = (
     interestRate,
     tenure,
     billDate,
+    interestDiscount,
+    interestDiscountType,
     emi: emiValue,
     totalLoan: P + totalInterest,
     totalPaidEMIs: completedMonths,
@@ -61,12 +78,16 @@ export const calculateAmortizationSchedule = ({
   r,
   billDate,
   emiValue,
+  interestDiscount,
+  interestDiscountType,
 }: {
   principal: number;
   n: number;
   r: number;
   billDate: Date;
   emiValue: number;
+  interestDiscount: number;
+  interestDiscountType: 'percent' | 'amount';
 }) => {
   let remaining = principal;
   const scheduleData: ScheduleData[] = [];
@@ -91,9 +112,15 @@ export const calculateAmortizationSchedule = ({
     lastPaymentDate = addMonths(lastPaymentDate, 1);
   }
 
+  const totalInterestWithDiscount = applyDiscount(
+    totalInterest,
+    interestDiscount,
+    interestDiscountType
+  );
+
   return {
     scheduleData,
-    totalInterest,
+    totalInterest: totalInterestWithDiscount,
   };
 };
 
@@ -120,3 +147,15 @@ export const calculateRemainingTenure = (
 
   return { completedMonths, remainingMonths };
 };
+
+function applyDiscount(
+  totalInterest: number,
+  discountValue: number,
+  discountType: 'percent' | 'amount'
+): number {
+  if (discountType === 'percent') {
+    return Math.max(totalInterest - totalInterest * (discountValue / 100), 0);
+  } else {
+    return Math.max(totalInterest - discountValue, 0);
+  }
+}
