@@ -9,10 +9,11 @@ import { IDispatch } from './types/store.types';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['emi'],
+  whitelist: ['emiModel'],
 };
 
-const persistedConfig = persistPlugin(persistConfig) as never;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const persistedConfig = persistPlugin(persistConfig) as any;
 
 const store = init({
   models,

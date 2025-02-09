@@ -1,6 +1,7 @@
 import Layout from '@/layout/Layout';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Home from './pages/Home';
+import EMIDetails from './pages/EMIDetails';
 
 const HomeRouter = () => {
   return (
@@ -20,6 +21,7 @@ const HomeRouter = () => {
         </Route> */}
         <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path='/emi/:id' element={<EMIDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>
