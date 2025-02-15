@@ -16,6 +16,9 @@ import {
 import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
 import { useAppDispatch } from '@/store/store';
 import FormModal from '@/components/EMI/AddButton';
+import { useState } from 'react';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
+import { formatAmount } from '@/utils/utils';
 
 const EMIDetails = () => {
   const { id } = useParams();
@@ -23,6 +26,7 @@ const EMIDetails = () => {
   const currentData = emiData.find((emi: IEmi) => emi.id === id);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   if (!currentData) {
     return <div>EMI not found</div>;
@@ -61,7 +65,7 @@ const EMIDetails = () => {
     dispatch.emiModel.recalculateEmi(currentData.id);
   };
 
-  const handleDelete = () => {
+  const handleConfirmDelete = () => {
     dispatch.emiModel.deleteEmi(currentData.id);
     navigate('/');
   };
@@ -77,7 +81,7 @@ const EMIDetails = () => {
         <div className='flex flex-row justify-between'>
           <h1 className='text-2xl font-bold '>{itemName}</h1>
           <div className='flex flex-row gap-2'>
-            <Button variant='destructive' onClick={handleDelete}>
+            <Button variant='destructive' onClick={() => setOpen(true)}>
               Delete
             </Button>
             <Button variant='outline' onClick={handleRecalculate}>
@@ -91,7 +95,7 @@ const EMIDetails = () => {
           <div className='col-span-1'>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Principal Amount </span>
-              <span>{principal}</span>
+              <span>{formatAmount(principal)}</span>
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Interest Rate </span>
@@ -117,15 +121,15 @@ const EMIDetails = () => {
           <div className='col-span-1'>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Monthly EMI </span>
-              <span>{emi.toFixed(2)}</span>
+              <span>{formatAmount(emi)}</span>
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Total Loan </span>
-              <span>{totalLoan.toFixed(2)}</span>
+              <span>{formatAmount(totalLoan)}</span>
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Total Interest </span>
-              <span>{totalInterest.toFixed(2)}</span>
+              <span>{formatAmount(totalInterest)}</span>
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Total Paid EMIs </span>
@@ -133,7 +137,7 @@ const EMIDetails = () => {
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Remaining Balance </span>
-              <span>{remainingBalance.toFixed(2)}</span>
+              <span>{formatAmount(remainingBalance)}</span>
             </span>
             <span className='grid grid-cols-2 space-y-2'>
               <span className='font-bold'>Is Completed </span>
@@ -172,6 +176,14 @@ const EMIDetails = () => {
             </TableBody>
           </Table>
         </div>
+        <ConfirmationModal
+          title='Are you sure you want to delete this EMI?'
+          description='This action cannot be undone.'
+          open={open}
+          setOpen={setOpen}
+          onCancel={() => setOpen(false)}
+          onConfirm={handleConfirmDelete}
+        />
       </MainContainer>
     </>
   );

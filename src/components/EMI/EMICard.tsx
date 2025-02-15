@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router';
 import { Card, CardContent, CardTitle } from '../ui/card';
 import { IEmi } from '@/store/models/emiModel';
+import { formatAmount } from '@/utils/utils';
 
 const EMICard = (props: IEmi) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const EMICard = (props: IEmi) => {
             </CardTitle>
             <span className='flex items-center text-base text-end'>
               {`\u20B9`}
-              {emi.toLocaleString()}
+              {formatAmount(emi)}
             </span>
           </div>
           <div className='flex flex-row justify-between text-muted-foreground tracking-wide'>
