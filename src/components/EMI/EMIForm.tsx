@@ -20,7 +20,7 @@ import { calculateEMI } from '@/utils/calculation';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '@/store/store';
 import { IEmi } from '@/store/models/emiModel';
-import ToolTipWrapper from '../common/ToolTipWrapper';
+import ToolTipWrapper from '../common/TooltipWrapper';
 
 const formSchema = z.object({
   itemName: z.string().min(2, {
@@ -260,16 +260,16 @@ const EMIForm = ({
                           type='button'
                           onClick={() =>
                             field.onChange(
-                              field.value === 'percent' ? 'amount' : 'percent'
+                              field.value === 'amount' ? 'percent' : 'amount'
                             )
                           }
                           className='bg-transparent border-none text-gray-500 hover:bg-transparent hover:text-foreground cursor-pointer'
                           {...field}
                         >
                           {field.value === 'amount' ? (
-                            <IndianRupee className='w-4 h-4' />
+                            <IndianRupee className='w-4 h-4 transition-all duration-300 scale-100' />
                           ) : (
-                            <PercentIcon className='w-4 h-4' />
+                            <PercentIcon className='w-4 h-4 transition-all duration-300 scale-100' />
                           )}
                         </button>
                       </div>

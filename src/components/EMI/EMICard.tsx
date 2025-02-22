@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router';
 import { Card, CardContent, CardTitle } from '../ui/card';
 import { IEmi } from '@/store/models/emiModel';
 import { formatAmount } from '@/utils/utils';
-
+import { CircleCheckBigIcon } from 'lucide-react';
 const EMICard = (props: IEmi) => {
   const navigate = useNavigate();
 
-  const { id, itemName, billDate, endDate, emi } = props;
+  const { id, itemName, billDate, endDate, emi, isCompleted } = props;
 
   const formattedBillDate = new Date(billDate).toLocaleDateString('en-US', {
     month: 'short',
@@ -26,9 +26,12 @@ const EMICard = (props: IEmi) => {
 
   return (
     <Card
-      className='cursor-pointer hover:bg-accent/50 transition-colors'
+      className='cursor-pointer hover:bg-accent/50 transition-colors relative'
       onClick={handleClick}
     >
+      {isCompleted && (
+        <CircleCheckBigIcon className='w-4 h-4 absolute top-2 right-2 text-green-500' />
+      )}
       <CardContent className='pt-6'>
         <div className='flex flex-col gap-2'>
           <div className='flex flex-row justify-between text-muted-foreground tracking-wide'>
