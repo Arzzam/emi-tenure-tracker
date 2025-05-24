@@ -7,17 +7,17 @@ import { useDispatch } from 'react-redux';
 import { IDispatch } from './types/store.types';
 
 const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: ['emiModel'],
+    key: 'root',
+    storage,
+    whitelist: ['emiModel'],
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const persistedConfig = persistPlugin(persistConfig) as any;
 
 const store = init({
-  models,
-  plugins: [loadingPlugin(), persistedConfig],
+    models,
+    plugins: [loadingPlugin(), persistedConfig],
 });
 
 export default store;

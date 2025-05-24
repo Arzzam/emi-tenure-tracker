@@ -1,1 +1,1 @@
-export { default as emiModel } from './emiModel';
+export { default as userModel } from './userModel';
