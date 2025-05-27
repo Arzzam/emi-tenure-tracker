@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useUser } from './useUser';
-import { EmiService } from '@/supabase/emiService';
 import { IEmi } from '@/types/emi.types';
+import { EmiService } from '@/utils/EMIService';
 
 export const useEmis = (): UseQueryResult<IEmi[], Error> => {
     const { data: user } = useUser();
