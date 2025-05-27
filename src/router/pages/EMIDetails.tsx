@@ -8,6 +8,9 @@ import FormModal from '@/components/emi/AddButton';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import { formatAmount } from '@/utils/utils';
 import { useDeleteEmi, useEmis } from '@/hooks/useEmi';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CalendarIcon, CreditCard, IndianRupee, Percent, Clock, Calculator, Receipt, Tag, Wallet } from 'lucide-react';
 
 const EMIDetails = () => {
     const { id } = useParams();
@@ -63,96 +66,208 @@ const EMIDetails = () => {
             <Header title="EMI Details" />
             <BreadcrumbContainer
                 className="pt-4 pb-0 px-8"
-                items={[{ label: 'Dashboard', link: '/' }, { label: 'EMI Details' }]}
+                items={[{ label: 'Dashboard', link: '/' }, { label: `EMI Details (${itemName})` }]}
             />
             <MainContainer>
-                <div className="flex flex-row justify-between">
-                    <h1 className="text-2xl font-bold ">{itemName}</h1>
-                </div>
-                <h3 className="text-lg font-bold mt-2 pl-2">EMI Details</h3>
-                <div className="grid grid-cols-2 gap-4 p-4">
-                    <div className="col-span-1">
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Principal Amount </span>
-                            <span>₹{formatAmount(principal)}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Interest Rate </span>
-                            <span>{interestRate}%</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Tenure </span>
-                            <span>{tenure} months</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Bill Date </span>
-                            <span>{formattedBillDate}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">End Date </span>
-                            <span>{formattedEndDate}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Remaining Tenure </span>
-                            <span>{remainingTenure} months</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">GST </span>
-                            <span>{gst} %</span>
-                        </span>
-                        {interestDiscount > 0 && (
-                            <span className="grid grid-cols-2 space-y-2">
-                                <span className="font-bold">Interest Discount </span>
-                                <span>
-                                    {interestDiscount} {interestDiscountType === 'percent' ? '%' : '₹'}
-                                </span>
-                            </span>
-                        )}
+                <div className="flex flex-col space-y-6">
+                    <Card>
+                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-3xl font-bold">{itemName}</h1>
+                                <Badge variant={isCompleted ? 'success' : 'info'}>
+                                    {isCompleted ? 'Completed' : 'Active'}
+                                </Badge>
+                            </div>
+                            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                                <Button variant="outline" className="flex-1 sm:flex-none">
+                                    <Link to={`/emi/${id}/amortization`} className="flex items-center gap-2">
+                                        <Calculator className="h-4 w-4" />
+                                        View Amortization
+                                    </Link>
+                                </Button>
+                                <FormModal data={currentData} />
+                                <Button
+                                    variant="destructive"
+                                    className="flex-1 sm:flex-none"
+                                    onClick={() => setOpen(true)}
+                                >
+                                    Delete EMI
+                                </Button>
+                            </div>
+                        </CardHeader>
+                    </Card>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Monthly EMI</CardTitle>
+                                <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">₹{formatAmount(emi)}</div>
+                                <p className="text-xs text-muted-foreground">Next due on {formattedBillDate}</p>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Total Loan</CardTitle>
+                                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">₹{formatAmount(totalLoan)}</div>
+                                <p className="text-xs text-muted-foreground">Principal: ₹{formatAmount(principal)}</p>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Interest Rate</CardTitle>
+                                <Percent className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{interestRate}%</div>
+                                <p className="text-xs text-muted-foreground">
+                                    Total Interest: ₹{formatAmount(totalInterest)}
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Tenure Progress</CardTitle>
+                                <Clock className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">
+                                    {totalPaidEMIs}/{tenure}
+                                </div>
+                                <div className="mt-2 h-2 w-full bg-secondary rounded-full">
+                                    <div
+                                        className="h-2 bg-primary rounded-full"
+                                        style={{ width: `${(totalPaidEMIs / tenure) * 100}%` }}
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                    <div className="col-span-1">
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Monthly EMI </span>
-                            <span>₹{formatAmount(emi)}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Total Loan </span>
-                            <span>₹{formatAmount(totalLoan)}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Total Interest </span>
-                            <span>₹{formatAmount(totalInterest)}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Total GST </span>
-                            <span>{totalGST ? `₹${formatAmount(totalGST)}` : 'N/A'}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Total Paid EMIs </span>
-                            <span>{totalPaidEMIs}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Remaining Balance </span>
-                            <span>₹{formatAmount(remainingBalance)}</span>
-                        </span>
-                        <span className="grid grid-cols-2 space-y-2">
-                            <span className="font-bold">Is Completed </span>
-                            <span className={`${isCompleted ? 'text-green-500' : 'text-red-500'}`}>
-                                {isCompleted ? 'Yes' : 'No'}
-                            </span>
-                        </span>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Receipt className="h-5 w-5" />
+                                    Payment Details
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Principal Amount</span>
+                                    <span className="font-medium">₹{formatAmount(principal)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Total Loan Amount</span>
+                                    <span className="font-medium">₹{formatAmount(totalLoan)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Monthly EMI</span>
+                                    <span className="font-medium">₹{formatAmount(emi)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Total Interest</span>
+                                    <span className="font-medium">₹{formatAmount(totalInterest)}</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Wallet className="h-5 w-5" />
+                                    Balance Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Remaining Balance</span>
+                                    <span className="font-medium">₹{formatAmount(remainingBalance)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Total Paid EMIs</span>
+                                    <span className="font-medium">{totalPaidEMIs}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Remaining Tenure</span>
+                                    <span className="font-medium">{remainingTenure} months</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Total Tenure</span>
+                                    <span className="font-medium">{tenure} months</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Tag className="h-5 w-5" />
+                                    Additional Details
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">GST Rate</span>
+                                    <span className="font-medium">{gst}%</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Total GST</span>
+                                    <span className="font-medium">₹{formatAmount(totalGST)}</span>
+                                </div>
+                                {interestDiscount > 0 && (
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm text-muted-foreground">Interest Discount</span>
+                                        <span className="font-medium">
+                                            {interestDiscount} {interestDiscountType === 'percent' ? '%' : '₹'}
+                                        </span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-muted-foreground">Status</span>
+                                    <Badge variant={isCompleted ? 'success' : 'info'}>
+                                        {isCompleted ? 'Completed' : 'Active'}
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <CalendarIcon className="h-5 w-5" />
+                                Important Dates
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-full">
+                                    <CalendarIcon className="h-6 w-6 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Start Date</p>
+                                    <p className="font-medium text-lg">{formattedBillDate}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-full">
+                                    <CalendarIcon className="h-6 w-6 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">End Date</p>
+                                    <p className="font-medium text-lg">{formattedEndDate}</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-                <div className="flex flex-row gap-2 mt-10">
-                    <Button variant="outline">
-                        <Link to={`/emi/${id}/amortization`} className="text-blue-500">
-                            Amortization Schedule
-                        </Link>
-                    </Button>
-                    <FormModal data={currentData} />
-                    <Button variant="destructive" onClick={() => setOpen(true)}>
-                        Delete
-                    </Button>
-                </div>
+
                 <ConfirmationModal
                     title="Are you sure you want to delete this EMI?"
                     description="This action cannot be undone."

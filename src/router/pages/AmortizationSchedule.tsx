@@ -25,7 +25,7 @@ const AmortizationSchedule = () => {
                 className="pt-4 pb-0 px-8"
                 items={[
                     { label: 'Dashboard', link: '/' },
-                    { label: 'EMI Details', link: `/emi/${id}` },
+                    { label: `EMI Details (${currentData?.itemName})`, link: `/emi/${id}` },
                     { label: 'Amortization Schedule' },
                 ]}
             />
