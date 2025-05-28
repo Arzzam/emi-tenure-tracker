@@ -1,5 +1,5 @@
 import { IEmi } from '@/types/emi.types';
-import { supabase } from './supabase';
+import { supabase } from '../supabase/supabase';
 import { queryClient } from '@/hooks/queryClient';
 import { User } from '@supabase/supabase-js';
 
@@ -143,9 +143,58 @@ export class EmiService {
     }
 
     static async updateEmiList(emiList: IEmi[]) {
-        const { error } = await supabase.from('emis').upsert(emiList);
+        const { error } = await supabase.from('emis').upsert(
+            emiList.map((emi) => ({
+                id: emi.id,
+                itemName: emi.itemName,
+                principal: emi.principal,
+                interestRate: emi.interestRate,
+                billDate: emi.billDate,
+                tenure: emi.tenure,
+                interestDiscount: emi.interestDiscount,
+                interestDiscountType: emi.interestDiscountType,
+                emi: emi.emi,
+                totalLoan: emi.totalLoan,
+                totalPaidEMIs: emi.totalPaidEMIs,
+                totalInterest: emi.totalInterest,
+                gst: emi.gst,
+                totalGST: emi.totalGST,
+                remainingBalance: emi.remainingBalance,
+                remainingTenure: emi.remainingTenure,
+                endDate: emi.endDate,
+                isCompleted: emi.isCompleted,
+                updatedAt: new Date().toISOString(),
+            }))
+        );
 
         if (error) throw error;
+
+        const { error: deleteError } = await supabase
+            .from('amortizationSchedules')
+            .delete()
+            .in(
+                'emiId',
+                emiList.map((emi) => emi.id)
+            );
+
+        if (deleteError) throw deleteError;
+
+        const allScheduleInserts = emiList.flatMap((emi) =>
+            emi.amortizationSchedules.map((schedule) => ({
+                emiId: emi.id,
+                month: schedule.month,
+                billDate: schedule.billDate,
+                emi: parseFloat(schedule.emi),
+                interest: parseFloat(schedule.interest),
+                principalPaid: parseFloat(schedule.principalPaid),
+                balance: parseFloat(schedule.balance),
+                gst: schedule.gst,
+            }))
+        );
+
+        const { error: scheduleError } = await supabase.from('amortizationSchedules').insert(allScheduleInserts);
+
+        if (scheduleError) throw scheduleError;
     }
 
     static async deleteEmi(id: string) {

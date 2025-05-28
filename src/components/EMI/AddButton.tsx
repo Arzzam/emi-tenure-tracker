@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 import EMIForm from './EMIForm';
-import { IEmi } from '@/store/models/emiModel';
+import { IEmi } from '@/types/emi.types';
 
 const FormModal = ({ data }: { data?: IEmi }) => {
     const [isOpen, setIsOpen] = useState(false);
