@@ -13,6 +13,7 @@ function CustomCalendar({
     showYearSwitcher = true,
     yearRange = 12,
     numberOfMonths,
+    disabled,
     ...props
 }: ICalendarProps) {
     const [navView, setNavView] = useState<'days' | 'years' | 'months'>('days');
@@ -51,7 +52,7 @@ function CustomCalendar({
             }}
             month={month}
             onMonthChange={setMonth}
-            disabled={{ after: new Date() }}
+            disabled={disabled || false}
             classNames={dayPickerClassNames}
             components={{
                 Chevron: ({ orientation }) => {

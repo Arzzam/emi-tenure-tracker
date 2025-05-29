@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { IndianRupee, Clock, AlertCircle, ArrowUpDown, Search } from 'lucide-react';
+import { omit, isEqual } from 'lodash';
 
 import { useLogin, useUser } from '@/hooks/useUser';
 import { useEmis, useUpdateEmiList } from '@/hooks/useEmi';
@@ -19,6 +20,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { Input } from '@/components/ui/input';
+
+const stripComparisonFields = (emi: IEmi) => {
+    return omit(emi, ['userId', 'createdAt', 'updatedAt', 'endDate']);
+};
 
 const Home = () => {
     const { data: user, isLoading: userLoading, isError: userError } = useUser();
@@ -83,7 +88,9 @@ const Home = () => {
 
     const recalculateEmis = () => {
         const emiList = (emiData as IEmi[] | [])?.map((emi) => calculateEMI(emi, emi.id));
-        mutate(emiList);
+        if (!isEqual(emiData.map(stripComparisonFields), emiList.map(stripComparisonFields))) {
+            mutate(emiList);
+        }
     };
 
     if (!user || userError) {
@@ -93,7 +100,7 @@ const Home = () => {
                 <MainContainer>
                     <Card className="max-w-md mx-auto mt-20">
                         <CardHeader>
-                            <CardTitle className="text-2xl text-center">Welcome to EMI Tracker</CardTitle>
+                            <CardTitle className="text-2xl text-center">Welcome to EmiTrax</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center gap-4">
                             <p className="text-muted-foreground text-center">
@@ -103,7 +110,7 @@ const Home = () => {
                                 size="lg"
                                 variant="outline"
                                 type="button"
-                                disabled={loginMutation.isPending}
+                                disabled={loginMutation.isPending || userLoading}
                                 onClick={() => loginMutation.mutate()}
                                 className="w-full max-w-xs"
                             >
