@@ -25,9 +25,9 @@ export const calculateEMI = (
         r,
         billDate,
         emiValue,
-        interestDiscount,
-        interestDiscountType,
-        gst,
+        interestDiscount: interestDiscount || 0,
+        interestDiscountType: interestDiscountType || 'percent',
+        gst: gst || 0,
     });
 
     const { completedMonths, remainingMonths } = calculateRemainingTenure(billDate, n, new Date());
@@ -39,7 +39,7 @@ export const calculateEMI = (
         return acc;
     }, 0);
 
-    const totalGST = Number(((totalInterest * gst) / 100).toFixed(2));
+    const totalGST = Number(((totalInterest * (gst || 0)) / 100).toFixed(2));
 
     const payload: IEmi = {
         id: id ? id : uuidv4(),
@@ -48,8 +48,8 @@ export const calculateEMI = (
         interestRate,
         tenure,
         billDate,
-        interestDiscount,
-        interestDiscountType,
+        interestDiscount: interestDiscount || 0,
+        interestDiscountType: interestDiscountType || 'percent',
         emi: emiValue,
         totalLoan: Number((P + totalInterest + totalGST).toFixed(2)),
         totalPaidEMIs: completedMonths,
@@ -59,7 +59,7 @@ export const calculateEMI = (
         endDate: addMonths(billDate, n - 1),
         amortizationSchedules: scheduleData,
         isCompleted: remainingMonths === 0,
-        gst: gst,
+        gst: gst || 0,
         totalGST: totalGST,
     };
 
