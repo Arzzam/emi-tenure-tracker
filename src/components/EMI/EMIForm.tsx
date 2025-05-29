@@ -29,13 +29,21 @@ const formSchema = z.object({
     tenure: z.number().min(1).max(360, {
         message: 'Tenure must be between 1 and 360 months.',
     }),
-    interestDiscount: z.number().min(0).max(100, {
-        message: 'Interest discount must be between 0 and 100.',
-    }),
-    interestDiscountType: z.enum(['percent', 'amount']),
-    gst: z.number().min(0).max(100, {
-        message: 'GST must be between 0 and 100.',
-    }),
+    interestDiscount: z
+        .number()
+        .min(0)
+        .max(100, {
+            message: 'Interest discount must be between 0 and 100.',
+        })
+        .optional(),
+    interestDiscountType: z.enum(['percent', 'amount']).optional(),
+    gst: z
+        .number()
+        .min(0)
+        .max(100, {
+            message: 'GST must be between 0 and 100.',
+        })
+        .optional(),
 });
 
 export type TFormValues = z.infer<typeof formSchema>;
@@ -194,7 +202,6 @@ const EMIForm = ({ setIsOpen, data }: { setIsOpen: (isOpen: boolean) => void; da
                                                     field.onChange(date);
                                                     setOpen(false);
                                                 }}
-                                                endMonth={new Date()}
                                             />
                                         </PopoverContent>
                                     </Popover>

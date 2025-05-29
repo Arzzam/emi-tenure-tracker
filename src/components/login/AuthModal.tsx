@@ -17,9 +17,14 @@ const LoginModal = () => {
         loginMutation.mutate();
     };
 
-    const handleLogout = () => {
+    const handleLogout = (setOpen: (open: boolean) => void) => {
         logoutMutation.mutate();
+        if (logoutMutation.isSuccess) {
+            setOpen(false);
+        }
     };
+
+    const isLoggingOut = logoutMutation.isPending;
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -53,6 +58,7 @@ const LoginModal = () => {
                         onCancel={() => setIsOpen(false)}
                         open={isOpen}
                         setOpen={setIsOpen}
+                        isLoading={isLoggingOut}
                     />
                 )}
             </DialogContent>

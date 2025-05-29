@@ -1,3 +1,4 @@
+import { Icons } from '@/assets/icons';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,15 +19,17 @@ const ConfirmationModal = ({
     onCancel,
     open,
     setOpen,
+    isLoading,
 }: {
     title: string;
     description?: string;
     cancelText?: string;
     confirmText?: string;
-    onConfirm: () => void;
+    onConfirm: (setOpen: (open: boolean) => void) => void;
     onCancel: () => void;
     open: boolean;
     setOpen: (open: boolean) => void;
+    isLoading?: boolean;
 }) => {
     const handleCancel = () => {
         setOpen(false);
@@ -34,8 +37,7 @@ const ConfirmationModal = ({
     };
 
     const handleConfirm = () => {
-        setOpen(false);
-        onConfirm();
+        onConfirm(setOpen);
     };
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
@@ -48,8 +50,14 @@ const ConfirmationModal = ({
                     <AlertDialogCancel onClick={handleCancel} className="cursor-pointer">
                         {cancelText || 'Cancel'}
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={handleConfirm} className="cursor-pointer">
-                        {confirmText || 'Confirm'}
+                    <AlertDialogAction onClick={handleConfirm} className="cursor-pointer" disabled={isLoading}>
+                        {isLoading ? (
+                            <>
+                                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> Confirming...
+                            </>
+                        ) : (
+                            confirmText || 'Confirm'
+                        )}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

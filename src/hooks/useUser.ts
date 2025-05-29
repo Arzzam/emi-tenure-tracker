@@ -5,7 +5,7 @@ export const useUser = () => {
     return useQuery({
         queryKey: ['user'],
         queryFn: () => getUser(),
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 5, // 5 minutes
     });
 };
 
@@ -41,7 +41,7 @@ export const useLogout = () => {
             if (error) throw error;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['user'] });
+            queryClient.resetQueries({ queryKey: ['user'] });
         },
     });
 };

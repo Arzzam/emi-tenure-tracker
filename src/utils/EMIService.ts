@@ -41,10 +41,10 @@ export class EmiService {
                 emiId: data[0].id,
                 month: schedule.month,
                 billDate: schedule.billDate,
-                emi: parseFloat(schedule.emi),
-                interest: parseFloat(schedule.interest),
-                principalPaid: parseFloat(schedule.principalPaid),
-                balance: parseFloat(schedule.balance),
+                emi: schedule.emi,
+                interest: schedule.interest,
+                principalPaid: schedule.principalPaid,
+                balance: schedule.balance,
                 gst: schedule.gst,
             }));
 
@@ -77,13 +77,13 @@ export class EmiService {
         return data.map((emi) => ({
             ...emi,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            amortizationSchedule: emi.amortizationSchedules.map((schedule: any) => ({
+            amortizationSchedules: emi.amortizationSchedules.map((schedule: any) => ({
                 month: schedule.month,
                 billDate: schedule.billDate,
-                emi: schedule.emi.toString(),
-                interest: schedule.interest.toString(),
-                principalPaid: schedule.principalPaid.toString(),
-                balance: schedule.balance.toString(),
+                emi: schedule.emi,
+                interest: schedule.interest,
+                principalPaid: schedule.principalPaid,
+                balance: schedule.balance,
                 gst: schedule.gst,
             })),
         }));
@@ -128,10 +128,10 @@ export class EmiService {
             emiId: emi.id,
             month: schedule.month,
             billDate: schedule.billDate,
-            emi: parseFloat(schedule.emi),
-            interest: parseFloat(schedule.interest),
-            principalPaid: parseFloat(schedule.principalPaid),
-            balance: parseFloat(schedule.balance),
+            emi: schedule.emi,
+            interest: schedule.interest,
+            principalPaid: schedule.principalPaid,
+            balance: schedule.balance,
             gst: schedule.gst,
         }));
 
@@ -184,10 +184,10 @@ export class EmiService {
                 emiId: emi.id,
                 month: schedule.month,
                 billDate: schedule.billDate,
-                emi: parseFloat(schedule.emi),
-                interest: parseFloat(schedule.interest),
-                principalPaid: parseFloat(schedule.principalPaid),
-                balance: parseFloat(schedule.balance),
+                emi: schedule.emi,
+                interest: schedule.interest,
+                principalPaid: schedule.principalPaid,
+                balance: schedule.balance,
                 gst: schedule.gst,
             }))
         );
