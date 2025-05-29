@@ -20,12 +20,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
+          cache: 'yarn'
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: |
+          yarn install --frozen-lockfile
+          yarn add -D typescript @types/node
 
       - name: 🏗 Build project
-        run: npm run build
+        run: |
+          yarn tsc --version
+          yarn tsc -b --verbose
+          yarn vite build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
