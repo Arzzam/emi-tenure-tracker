@@ -4,7 +4,7 @@ import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
 import { Button } from '@/components/ui/button';
 import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
-import FormModal from '@/components/temp/AddButton';
+import FormModal from '@/components/emi/AddButton';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import { formatAmount } from '@/utils/utils';
 import { useDeleteEmi, useEmis } from '@/hooks/useEmi';
