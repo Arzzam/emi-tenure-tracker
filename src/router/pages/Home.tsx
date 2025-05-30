@@ -12,10 +12,10 @@ import { formatAmount } from '@/utils/utils';
 import { Icons } from '@/assets/icons';
 import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
-import FormModal from '@/components/emi/AddButton';
-import EMICard from '@/components/emi/EMICard';
-import EMICardSkeleton from '@/components/emi/EMICardSkeleton';
-import EMIFilter, { FilterOptions } from '@/components/emi/EMIFilter';
+import FormModal from '@/components/temp/AddButton';
+import EMICard from '@/components/temp/EMICard';
+import EMICardSkeleton from '@/components/temp/EMICardSkeleton';
+import EMIFilter, { FilterOptions } from '@/components/temp/EMIFilter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

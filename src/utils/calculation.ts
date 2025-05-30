@@ -1,4 +1,4 @@
-import { TFormValues } from '@/components/emi/EMIForm';
+import { TFormValues } from '@/components/temp/EMIForm';
 import { IEmi, ScheduleData } from '@/types/emi.types';
 import { addMonths, format, isBefore } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
