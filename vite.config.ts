@@ -12,13 +12,4 @@ export default defineConfig({
             },
         ],
     },
-    build: {
-        lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
-            name: 'EmiTrax',
-            fileName: 'EmiTrax',
-        },
-        sourcemap: 'inline',
-        emptyOutDir: true,
-    },
 });
