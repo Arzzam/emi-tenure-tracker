@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
@@ -11,17 +11,46 @@ import { useDeleteEmi, useEmis } from '@/hooks/useEmi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, CreditCard, IndianRupee, Percent, Clock, Calculator, Receipt, Tag, Wallet } from 'lucide-react';
+import NotFound from '@/components/common/NotFound';
+import LoadingDetails from '@/components/common/LoadingDetails';
 
 const EMIDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { data } = useEmis();
+    const { data, isFetching } = useEmis();
     const { mutate } = useDeleteEmi();
     const currentData = data?.find((emi) => emi.id === id) || null;
     const [open, setOpen] = useState(false);
+    const [notFound, setNotFound] = useState(false);
 
-    if (!currentData) {
-        return <div>EMI not found</div>;
+    useEffect(() => {
+        if (!isFetching && data && !currentData) {
+            setNotFound(true);
+            const redirectTimer = setTimeout(() => {
+                navigate('/');
+            }, 3000);
+
+            return () => clearTimeout(redirectTimer);
+        }
+    }, [isFetching, data, currentData, navigate]);
+
+    if (isFetching) {
+        return (
+            <LoadingDetails
+                title="EMI Details"
+                description="Loading EMI details..."
+                description2="Please wait while we fetch your EMI information."
+            />
+        );
+    }
+
+    if (notFound || !currentData) {
+        return (
+            <NotFound
+                title="EMI Not Found"
+                description="We couldn't find the EMI you're looking for. It may have been deleted or doesn't exist."
+            />
+        );
     }
 
     const {
