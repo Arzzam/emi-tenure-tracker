@@ -15,36 +15,46 @@ import ToolTipWrapper from '../common/TooltipWrapper';
 import { useCreateEmi, useUpdateEmi } from '@/hooks/useEmi';
 import { IEmi } from '@/types/emi.types';
 
-const formSchema = z.object({
-    itemName: z.string().min(2, {
-        message: 'Item name must be at least 2 characters.',
-    }),
-    principal: z.number().min(1000, {
-        message: 'Principal amount must be at least ₹1,000.',
-    }),
-    interestRate: z.number().min(0).max(100, {
-        message: 'Interest rate must be between 1 and 100.',
-    }),
-    billDate: z.date({ message: 'Please select a bill date.' }),
-    tenure: z.number().min(1).max(360, {
-        message: 'Tenure must be between 1 and 360 months.',
-    }),
-    interestDiscount: z
-        .number()
-        .min(0)
-        .max(100, {
-            message: 'Interest discount must be between 0 and 100.',
-        })
-        .optional(),
-    interestDiscountType: z.enum(['percent', 'amount']).optional(),
-    gst: z
-        .number()
-        .min(0)
-        .max(100, {
-            message: 'GST must be between 0 and 100.',
-        })
-        .optional(),
-});
+const formSchema = z
+    .object({
+        itemName: z.string().min(2, {
+            message: 'Item name must be at least 2 characters.',
+        }),
+        principal: z.number().min(100, {
+            message: 'Principal amount must be at least ₹100.',
+        }),
+        interestRate: z.number().min(0).max(100, {
+            message: 'Interest rate must be between 1 and 100.',
+        }),
+        billDate: z.date({ message: 'Please select a bill date.' }),
+        tenure: z.number().min(1).max(360, {
+            message: 'Tenure must be between 1 and 360 months.',
+        }),
+        interestDiscountType: z.enum(['percent', 'amount']).optional(),
+        interestDiscount: z.number().optional(),
+        gst: z
+            .number()
+            .min(0)
+            .max(100, {
+                message: 'GST must be between 0 and 100.',
+            })
+            .optional(),
+    })
+    .refine(
+        (data) => {
+            if (data.interestDiscount === undefined) return true;
+
+            if (data.interestDiscountType === 'percent') {
+                return data.interestDiscount >= 0 && data.interestDiscount <= 100;
+            }
+
+            return data.interestDiscount >= 0;
+        },
+        {
+            message: 'Interest discount must be between 0-100% for percent type or a positive value for amount type',
+            path: ['interestDiscount'],
+        }
+    );
 
 export type TFormValues = z.infer<typeof formSchema>;
 
