@@ -1,13 +1,16 @@
 import { IEmi } from '@/types/emi.types';
 import { supabase } from '../supabase/supabase';
-import { queryClient } from '@/hooks/queryClient';
-import { User } from '@supabase/supabase-js';
+import store from '@/store/store';
 
 export class EmiService {
     static async createEmi(emi: Omit<IEmi, 'id'>) {
-        const user: { user: User } | undefined = queryClient.getQueryData(['user']);
+        const { id } = store.getState().userModel;
+        let userId = id;
 
-        if (!user) throw new Error('User not found');
+        if (!id) {
+            const { data: user } = await supabase.auth.getUser();
+            userId = user.user?.id || '';
+        }
 
         const { data, error } = await supabase
             .from('emis')
@@ -29,7 +32,7 @@ export class EmiService {
                 remainingTenure: emi.remainingTenure,
                 endDate: emi.endDate,
                 isCompleted: emi.isCompleted,
-                userId: user.user?.id,
+                userId: userId,
             })
             .select();
 
@@ -57,9 +60,13 @@ export class EmiService {
     }
 
     static async getEmis() {
-        const user: { user: User } | undefined = queryClient.getQueryData(['user']);
+        const { id } = store.getState().userModel;
+        let userId = id;
 
-        if (!user) throw new Error('User not found');
+        if (!id) {
+            const { data: user } = await supabase.auth.getUser();
+            userId = user.user?.id || '';
+        }
 
         const { data, error } = await supabase
             .from('emis')
@@ -69,7 +76,7 @@ export class EmiService {
         amortizationSchedules (*)
       `
             )
-            .eq('userId', user.user?.id || '')
+            .eq('userId', userId)
             .order('createdAt', { ascending: false });
 
         if (error) throw error;

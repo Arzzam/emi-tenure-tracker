@@ -1,12 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { IndianRupee, Clock, AlertCircle, ArrowUpDown, Search } from 'lucide-react';
-import { omit, isEqual } from 'lodash';
 
 import { useLogin, useUser } from '@/hooks/useUser';
-import { useEmis, useUpdateEmiList } from '@/hooks/useEmi';
-import { useAppDispatch } from '@/store/store';
+import { useEmis, useAutoRecalculateEmis, useUpdateEmiList } from '@/hooks/useEmi';
+import { useRematchDispatch } from '@/store/store';
 import { IEmi } from '@/types/emi.types';
-import { calculateEMI } from '@/utils/calculation';
+import { IDispatch } from '@/store/types/store.types';
 import { formatAmount } from '@/utils/utils';
 
 import { Icons } from '@/assets/icons';
@@ -18,20 +17,18 @@ import EMICardSkeleton from '@/components/emi/EMICardSkeleton';
 import EMIFilter, { FilterOptions } from '@/components/emi/EMIFilter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 import { Input } from '@/components/ui/input';
-
-const stripComparisonFields = (emi: IEmi) => {
-    return omit(emi, ['userId', 'createdAt', 'updatedAt', 'endDate']);
-};
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const Home = () => {
     const { data: user, isLoading: userLoading, isError: userError } = useUser();
     const { data, isLoading: isEMILoading, isError: isEmisError } = useEmis();
     const loginMutation = useLogin();
-    const { mutate } = useUpdateEmiList();
-    const dispatch = useAppDispatch();
+    const { setUser } = useRematchDispatch((state: IDispatch) => state.userModel);
+    const { recalculateNow } = useAutoRecalculateEmis();
+    const { isPending: isUpdatingEmis } = useUpdateEmiList();
     const [searchQuery, setSearchQuery] = useState('');
+    const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
     const [filters, setFilters] = useState<FilterOptions>({
         status: 'all',
         sortBy: 'updated',
@@ -39,7 +36,7 @@ const Home = () => {
 
     useEffect(() => {
         if (user) {
-            dispatch.userModel.setUser({
+            setUser({
                 id: user.user?.id || '',
                 email: user.user?.email || '',
                 rawData: user.user?.user_metadata || {},
@@ -85,13 +82,6 @@ const Home = () => {
                 }
             });
     }, [emiData, filters, searchQuery]);
-
-    const recalculateEmis = () => {
-        const emiList = (emiData as IEmi[] | [])?.map((emi) => calculateEMI(emi, emi.id));
-        if (!isEqual(emiData.map(stripComparisonFields), emiList.map(stripComparisonFields))) {
-            mutate(emiList);
-        }
-    };
 
     if (!user || userError) {
         return (
@@ -226,7 +216,7 @@ const Home = () => {
                                         <FormModal />
                                         <Button
                                             variant="outline"
-                                            onClick={recalculateEmis}
+                                            onClick={() => setOpenConfirmationModal(true)}
                                             className="flex-1 sm:flex-none"
                                         >
                                             <ArrowUpDown className="mr-2 h-4 w-4" />
@@ -266,6 +256,18 @@ const Home = () => {
                         )}
                     </>
                 )}
+                <ConfirmationModal
+                    title="Recalculate EMIs"
+                    description="The recalculation will happen every day automatically. Do you want to manually recalculate now?"
+                    onConfirm={() => {
+                        recalculateNow();
+                        setOpenConfirmationModal(false);
+                    }}
+                    onCancel={() => setOpenConfirmationModal(false)}
+                    open={openConfirmationModal}
+                    setOpen={setOpenConfirmationModal}
+                    isLoading={isUpdatingEmis}
+                />
             </MainContainer>
         </>
     );

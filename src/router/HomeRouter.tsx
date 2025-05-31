@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import EMIDetails from './pages/EMIDetails';
 import { OAuth } from './pages/OAuthRoute';
 import AmortizationSchedule from './pages/AmortizationSchedule';
+import NotFoundPage from './pages/NotFoundPage';
 
 const HomeRouter = () => {
     return (
@@ -14,6 +15,7 @@ const HomeRouter = () => {
                     <Route index element={<Home />} />
                     <Route path="/emi/:id" element={<EMIDetails />} />
                     <Route path="/emi/:id/amortization" element={<AmortizationSchedule />} />
+                    <Route path="*" element={<NotFoundPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
