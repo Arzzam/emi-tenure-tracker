@@ -1,17 +1,19 @@
-import { init } from '@rematch/core';
+import { Action, init } from '@rematch/core';
 import storage from 'redux-persist/lib/storage';
 import loadingPlugin from '@rematch/loading';
 import persistPlugin from '@rematch/persist';
-import * as models from './models';
+import { models } from './IModels';
 import { useDispatch } from 'react-redux';
 import { IDispatch } from './types/store.types';
+import { Dispatch } from 'redux';
 
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['emiModel'],
+    whitelist: ['userModel', 'lastUpdateAt'],
 };
 
+// const persistedConfig: Plugin<IRootModel, Models<IRootModel>, Partial<Models<IRootModel>>> = persistPlugin(persistConfig);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const persistedConfig = persistPlugin(persistConfig) as any;
 
@@ -23,3 +25,8 @@ const store = init({
 export default store;
 
 export const useAppDispatch = () => useDispatch<IDispatch>();
+
+export const useRematchDispatch = <D extends Dispatch<Action>, MD>(selector: (dispatch: D) => MD) => {
+    const dispatch = useDispatch<D>();
+    return selector(dispatch);
+};
