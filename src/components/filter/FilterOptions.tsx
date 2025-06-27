@@ -1,8 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
-import { IEmi } from '@/types/emi.types';
-import { Button } from '../ui/button';
 import { X } from 'lucide-react';
+
+import { IEmi } from '@/types/emi.types';
+
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export type TFilterOptions = {
     status: 'all' | 'active' | 'completed';

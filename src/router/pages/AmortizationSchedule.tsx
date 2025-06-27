@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { Table, TableCell, TableBody, TableRow, TableHead, TableHeader } from '@/components/ui/table';
+import { IEmi } from '@/types/emi.types';
+import { useEmis } from '@/hooks/useEmi';
 import { formatAmount, getFormattedDate } from '@/utils/utils';
+
+import { Table, TableCell, TableBody, TableRow, TableHead, TableHeader } from '@/components/ui/table';
 import MainContainer from '@/components/common/Container';
 import Header from '@/components/common/Header';
 import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
-import { IEmi } from '@/types/emi.types';
-import { useEmis } from '@/hooks/useEmi';
 import NotFound from '@/components/common/NotFound';
 import LoadingDetails from '@/components/common/LoadingDetails';
 

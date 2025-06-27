@@ -1,7 +1,8 @@
-import { TFormValues } from '@/components/emi/EMIForm';
-import { IEmi, ScheduleData } from '@/types/emi.types';
-import { addMonths, format, isBefore } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
+import { addMonths, format, isBefore } from 'date-fns';
+
+import { IEmi, ScheduleData } from '@/types/emi.types';
+import { TFormValues } from '@/components/emi/EMIForm';
 
 export const calculateEMI = (
     {

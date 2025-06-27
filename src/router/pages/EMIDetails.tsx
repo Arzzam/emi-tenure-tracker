@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
-import MainContainer from '@/components/common/Container';
-import Header from '@/components/common/Header';
-import { Button } from '@/components/ui/button';
-import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
-import FormModal from '@/components/emi/AddButton';
-import ConfirmationModal from '@/components/common/ConfirmationModal';
+import { CalendarIcon, CreditCard, IndianRupee, Percent, Clock, Calculator, Receipt, Tag, Wallet } from 'lucide-react';
+
 import { formatAmount } from '@/utils/utils';
 import { useDeleteEmi, useEmis } from '@/hooks/useEmi';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import MainContainer from '@/components/common/Container';
+import Header from '@/components/common/Header';
+import BreadcrumbContainer from '@/components/common/BreadcrumbContainer';
+import FormModal from '@/components/emi/AddButton';
 import { Badge } from '@/components/ui/badge';
-import { CalendarIcon, CreditCard, IndianRupee, Percent, Clock, Calculator, Receipt, Tag, Wallet } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 import NotFound from '@/components/common/NotFound';
 import LoadingDetails from '@/components/common/LoadingDetails';
 

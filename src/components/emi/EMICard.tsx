@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router';
-import { Card, CardContent, CardTitle } from '../ui/card';
-import { formatAmount } from '@/utils/utils';
 import { CircleCheckBigIcon, Tag, User } from 'lucide-react';
+
+import { formatAmount } from '@/utils/utils';
 import { IEmi } from '@/types/emi.types';
-import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
+
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardTitle } from '../ui/card';
 
 const EMICard = (props: IEmi) => {
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
-import { IEmi } from '@/types/emi.types';
-import { supabase } from '../supabase/supabase';
 import store from '@/store/store';
+import { IEmi } from '@/types/emi.types';
+import { supabase } from '@/supabase/supabase';
 
 export class EmiService {
     static async createEmi(emi: Omit<IEmi, 'id'>) {

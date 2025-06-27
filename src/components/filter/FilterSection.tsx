@@ -1,10 +1,11 @@
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Search } from 'lucide-react';
+
+import { IEmi } from '@/types/emi.types';
+
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import FormModal from '../emi/AddButton';
 import { Input } from '../ui/input';
-import { Search } from 'lucide-react';
-import { IEmi } from '@/types/emi.types';
 import FilterOptions, { TFilterOptions } from './FilterOptions';
 
 interface EMIFilterOptionsProps {
