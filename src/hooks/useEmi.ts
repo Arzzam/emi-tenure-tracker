@@ -1,10 +1,11 @@
+import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import { isEqual, omit } from 'lodash';
+
 import { IEmi } from '@/types/emi.types';
 import { EmiService } from '@/utils/EMIService';
-import { useEffect } from 'react';
 import { calculateEMI } from '@/utils/calculation';
-import { isEqual, omit } from 'lodash';
-import { useSelector } from 'react-redux';
 import { IDispatch, IRootState } from '@/store/types/store.types';
 import { useRematchDispatch } from '@/store/store';
 
