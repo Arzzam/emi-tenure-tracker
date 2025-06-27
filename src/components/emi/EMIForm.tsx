@@ -2,7 +2,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { CalendarIcon, IndianRupee, Info, PercentIcon } from 'lucide-react';
+import { CalendarIcon, IndianRupee, Info, PercentIcon, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import CustomCalendar from '../calender/CustomCalender';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,6 +39,7 @@ const formSchema = z
                 message: 'GST must be between 0 and 100.',
             })
             .optional(),
+        tag: z.string().optional(),
     })
     .refine(
         (data) => {
@@ -76,6 +77,7 @@ const EMIForm = ({ setIsOpen, data }: { setIsOpen: (isOpen: boolean) => void; da
             interestDiscount: data?.interestDiscount || undefined,
             interestDiscountType: data?.interestDiscountType || 'percent',
             gst: data?.gst || undefined,
+            tag: data?.tag || 'Personal',
         },
     });
 
@@ -118,6 +120,24 @@ const EMIForm = ({ setIsOpen, data }: { setIsOpen: (isOpen: boolean) => void; da
                             <FormLabel>Item Name</FormLabel>
                             <FormControl>
                                 <Input placeholder="e.g., Laptop" {...field} min={0} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="tag"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex flex-row gap-2">
+                                <FormLabel>Category Tag</FormLabel>
+                                <ToolTipWrapper content="Use tags to categorize EMIs (e.g., Personal, Friend: John, etc.)">
+                                    <Tag className="w-4 h-4" />
+                                </ToolTipWrapper>
+                            </div>
+                            <FormControl>
+                                <Input placeholder="e.g., Personal, Friend: John" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

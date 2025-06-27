@@ -33,6 +33,7 @@ export class EmiService {
                 endDate: emi.endDate,
                 isCompleted: emi.isCompleted,
                 userId: userId,
+                tag: emi.tag,
             })
             .select();
 
@@ -119,6 +120,7 @@ export class EmiService {
                 remainingTenure: emi.remainingTenure,
                 endDate: emi.endDate,
                 isCompleted: emi.isCompleted,
+                tag: emi.tag,
                 updatedAt: new Date().toISOString(), // <-- important
             })
             .eq('id', emi.id)
@@ -170,6 +172,7 @@ export class EmiService {
                 remainingTenure: emi.remainingTenure,
                 endDate: emi.endDate,
                 isCompleted: emi.isCompleted,
+                tag: emi.tag,
                 updatedAt: new Date().toISOString(),
             }))
         );
